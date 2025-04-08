@@ -8,8 +8,8 @@ const client = new Twilio(accountSid, authToken)
 export async function sendNotification(fromCpf: string, toPhone: string) {
   const message = await client.messages.create({
     from: env.TWILIO_PHONE_NUMBER,
-    to: env.PAYEE_PHONE_NUMBER,
-    body: `${toPhone} received a new transaction from ${
+    to: toPhone,
+    body: `You received a new transaction from ${
       '***' + fromCpf.slice(3, fromCpf.length - 2) + '**'
     }`,
   })

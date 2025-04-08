@@ -7,6 +7,9 @@ CREATE TABLE "transactions" (
     "value" DECIMAL(20,2) NOT NULL,
     "payer_sender_id" TEXT NOT NULL,
     "payee_received_id" TEXT NOT NULL,
+    "from_cpf_cnpj" TEXT NOT NULL,
+    "to_cpf_cnpj" TEXT NOT NULL,
+    "to_phone" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "transactions_pkey" PRIMARY KEY ("id")
@@ -19,6 +22,7 @@ CREATE TABLE "users" (
     "email" TEXT NOT NULL,
     "password_hash" TEXT NOT NULL,
     "cpf_cnpj" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
     "role" "Role" NOT NULL,
     "walletBalance" DECIMAL(20,2) NOT NULL DEFAULT 0.00,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

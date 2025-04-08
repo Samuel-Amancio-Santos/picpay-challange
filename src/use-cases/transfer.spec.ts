@@ -16,7 +16,7 @@ describe('Transfer Use Case', () => {
   beforeEach(async () => {
     usersRepository = new InMemoryUsersRepository()
     transactionsRepository = new InMemoryTransactionsRepository(usersRepository)
-    sut = new TransferUseCase(transactionsRepository, usersRepository)
+    sut = new TransferUseCase(transactionsRepository)
   })
   it('should be able to transfer to the user and test the accuracy.', async () => {
     const user1 = await usersRepository.create({
@@ -26,6 +26,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf',
       walletBalance: new Decimal(100),
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     const user2 = await usersRepository.create({
@@ -35,6 +36,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf2',
       walletBalance: new Decimal(0),
       role: 'SELLER',
+      phone: '+5581983276366',
     })
 
     for (let i = 0; i < 3; i++) {
@@ -56,6 +58,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf',
       walletBalance: new Decimal(100),
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     await expect(async () => {
@@ -75,6 +78,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf',
       walletBalance: new Decimal(100),
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     const user2 = await usersRepository.create({
@@ -84,6 +88,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf2',
       walletBalance: new Decimal(0),
       role: 'SELLER',
+      phone: '+5581983276366',
     })
 
     await expect(async () => {
@@ -102,6 +107,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf',
       walletBalance: new Decimal(100),
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     const user2 = await usersRepository.create({
@@ -111,6 +117,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf2',
       walletBalance: new Decimal(0),
       role: 'SELLER',
+      phone: '+5581983276366',
     })
 
     await expect(async () => {
@@ -129,6 +136,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf',
       walletBalance: new Decimal(100),
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     await usersRepository.create({
@@ -138,6 +146,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf2',
       walletBalance: new Decimal(0),
       role: 'SELLER',
+      phone: '+5581983276366',
     })
 
     await expect(async () => {
@@ -157,6 +166,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf',
       walletBalance: new Decimal(100),
       role: 'SELLER',
+      phone: '+5581983276366',
     })
 
     const user2 = await usersRepository.create({
@@ -166,6 +176,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf2',
       walletBalance: new Decimal(0),
       role: 'SELLER',
+      phone: '+5581983276366',
     })
 
     await expect(async () => {
@@ -184,6 +195,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf',
       walletBalance: new Decimal(876.234452),
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     const user2 = await usersRepository.create({
@@ -193,6 +205,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf2',
       walletBalance: new Decimal(123.23422),
       role: 'SELLER',
+      phone: '+5581983276366',
     })
 
     await sut.execute({
@@ -212,6 +225,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf',
       walletBalance: new Decimal(876.234452),
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     const user2 = await usersRepository.create({
@@ -221,6 +235,7 @@ describe('Transfer Use Case', () => {
       cpf_cnpj: 'user cpf2',
       walletBalance: new Decimal(123.23422),
       role: 'SELLER',
+      phone: '+5581983276366',
     })
 
     const { transaction } = await sut.execute({

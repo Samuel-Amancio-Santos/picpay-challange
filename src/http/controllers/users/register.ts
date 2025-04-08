@@ -12,9 +12,10 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     user_cpf_cnpj: z.string(),
     password: z.string().min(6),
     role: RoleEnum,
+    phone: z.string(),
   })
 
-  const { name, email, password, user_cpf_cnpj, role } =
+  const { name, email, password, user_cpf_cnpj, role, phone } =
     registerUserBodySchema.parse(request.body)
 
   try {
@@ -25,6 +26,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
       user_cpf_cnpj,
       password,
       role,
+      phone,
     })
   } catch (err) {
     if (err instanceof UserAlreadyExistsError) {

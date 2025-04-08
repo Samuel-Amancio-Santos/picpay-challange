@@ -25,13 +25,21 @@ export async function transfer(request: FastifyRequest, reply: FastifyReply) {
 
   try {
     const makeTransferUseCase = makeTransferUsersUseCase()
-    const { from, to } = await makeTransferUseCase.execute({
+    const { transaction } = await makeTransferUseCase.execute({
       payer_id: request.user.sub,
       value,
       payee,
     })
-    if (makeTransferUseCase) {
-      await sendNotification(from.cpf_cnpj, to.phone)
+    try {
+      await sendNotification(transaction.from_cpf_cnpj, transaction.to_phone)
+      return reply
+        .status(201)
+        .send({ message: 'Transfer completed and notification sent.' })
+    } catch (notificationError) {
+      return reply.status(201).send({
+        message:
+          'Transfer completed successfully, but the notification service is currently unavailable. (Twilio live mode required).',
+      })
     }
   } catch (err) {
     if (err instanceof ValueMustBeGreaterThanZero) {
@@ -52,6 +60,4 @@ export async function transfer(request: FastifyRequest, reply: FastifyReply) {
 
     throw err
   }
-
-  return reply.status(201).send()
 }

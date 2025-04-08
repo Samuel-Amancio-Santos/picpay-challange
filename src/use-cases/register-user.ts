@@ -12,6 +12,7 @@ interface RegisterUseCaseRequest {
   user_cpf_cnpj: string
   password: string
   role: 'USER' | 'SELLER'
+  phone: string
 }
 
 interface RegisterUseCaseResponse {
@@ -27,6 +28,7 @@ export class RegisterUseCase {
     password,
     user_cpf_cnpj,
     role,
+    phone,
   }: RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
     const password_hash = await hash(password, 6)
 
@@ -57,6 +59,7 @@ export class RegisterUseCase {
       cpf_cnpj: user_cpf_cnpj,
       walletBalance: 0,
       role,
+      phone,
     })
 
     return {

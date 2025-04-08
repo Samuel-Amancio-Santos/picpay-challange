@@ -23,6 +23,9 @@ model Transaction {
   value             Decimal  @db.Decimal(20, 2)
   payer_sender_id   String
   payee_received_id String
+  from_cpf_cnpj     String
+  to_cpf_cnpj       String
+  to_phone          String
   user              User     @relation(fields: [payer_sender_id], references: [id])
   created_at        DateTime @default(now())
 
@@ -35,7 +38,7 @@ model User {
   email         String        @unique
   password_hash String
   cpf_cnpj      String        @unique
-  phone         String        @default("")
+  phone         String
   role          Role
   walletBalance Decimal       @default(0.00) @db.Decimal(20, 2)
   Transaction   Transaction[]

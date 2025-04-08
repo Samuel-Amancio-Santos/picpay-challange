@@ -61,6 +61,9 @@ export class PrismaTransactionsRepository implements TransacitonsRepository {
           payer_sender_id: userPayer.id,
           payee_received_id: payeeReceived.id,
           value,
+          from_cpf_cnpj: userPayer.cpf_cnpj,
+          to_cpf_cnpj: payeeReceived.cpf_cnpj,
+          to_phone: payeeReceived.phone,
         },
       })
 

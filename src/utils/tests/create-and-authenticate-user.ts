@@ -10,6 +10,7 @@ export async function createAndAuthenticateUser() {
     password: '123123',
     user_cpf_cnpj: cpf.generate(),
     role: 'USER',
+    phone: '+5581983276366',
   })
 
   await request(app.server).post('/users').send({
@@ -18,6 +19,7 @@ export async function createAndAuthenticateUser() {
     password: '123123',
     user_cpf_cnpj: cpf.generate(),
     role: 'USER',
+    phone: '+5581983276466',
   })
 
   const userAuthenticate = await request(app.server).post('/login').send({

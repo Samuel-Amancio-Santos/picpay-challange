@@ -18,6 +18,7 @@ describe('Register tests e2e', () => {
       password: '123123',
       user_cpf_cnpj: '112.830.790-11',
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     expect(response.statusCode).toEqual(201)
