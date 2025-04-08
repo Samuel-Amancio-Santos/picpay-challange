@@ -47,6 +47,9 @@ export class InMemoryTransactionsRepository implements TransacitonsRepository {
       value,
       payee_received_id: payeeUser.id,
       created_at: new Date(),
+      from_cpf_cnpj: userPayer.cpf_cnpj,
+      to_cpf_cnpj: payeeUser.cpf_cnpj,
+      to_phone: payeeUser.phone,
     }
 
     this.items.push(transaction)

@@ -44,6 +44,7 @@ export class InMemoryUsersRepository implements UsersRepository {
       cpf_cnpj: data.cpf_cnpj,
       role: data.role ?? Role.USER,
       walletBalance: Prisma.Decimal(Number(data.walletBalance)) ?? 0,
+      phone: data.phone,
       created_at: new Date(),
     }
     this.items.push(user)

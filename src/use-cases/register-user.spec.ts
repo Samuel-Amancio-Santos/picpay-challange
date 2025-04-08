@@ -16,6 +16,7 @@ describe('Register Use Case', () => {
       password: '123456',
       user_cpf_cnpj: '112.830.790-11',
       role: 'USER',
+      phone: '+5581983276366',
     })
     expect(user.id).toEqual(expect.any(String))
   })
@@ -32,6 +33,7 @@ describe('Register Use Case', () => {
       password: '123456',
       user_cpf_cnpj: '112.830.790-11',
       role: 'USER',
+      phone: '+5581983276366',
     })
     await expect(
       async () =>
@@ -41,6 +43,7 @@ describe('Register Use Case', () => {
           password: '123456',
           user_cpf_cnpj: '514.909.970-83',
           role: 'USER',
+          phone: '+5581983276366',
         }),
     ).rejects.toBeInstanceOf(UserAlreadyExistsError)
 
@@ -52,6 +55,7 @@ describe('Register Use Case', () => {
           password: '123456',
           user_cpf_cnpj: '112.830.790-11',
           role: 'USER',
+          phone: '+5581983276366',
         }),
     ).rejects.toBeInstanceOf(CpfOrCnpjAlreadyExistsError)
 
@@ -63,6 +67,7 @@ describe('Register Use Case', () => {
           password: '123456',
           user_cpf_cnpj: '112.83.790-11',
           role: 'USER',
+          phone: '+5581983276366',
         }),
     ).rejects.toBeInstanceOf(InvalidCredentialsError)
   })

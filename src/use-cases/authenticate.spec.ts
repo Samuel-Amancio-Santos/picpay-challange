@@ -18,6 +18,7 @@ describe('Authenticate Use Case', () => {
       password_hash: await hash('123456', 6),
       cpf_cnpj: 'USER CPF',
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     const { user } = await sut.execute({
