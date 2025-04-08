@@ -25,5 +25,11 @@ Deve-se consultar o autorizador externo antes de confirmar a operação
 - [x] A transferência deve ser atômica e reversível em caso de falhas
 - [x] Após a transferência, o destinatário deve ser notificado via serviço externo
 
+## Stacks de Desenvolvimento
 
-
+- Node.js
+- TypeScript
+- Fastify
+- PostgresSQL
+- Docker 
+- Prisma ORM
