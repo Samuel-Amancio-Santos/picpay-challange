@@ -8,6 +8,7 @@ import { UnexpectedError } from '@/use-cases/err/unexpected-error'
 
 import { z } from 'zod'
 import { Decimal } from '@prisma/client/runtime/library'
+import { sendNotification } from '@/utils/twlio'
 
 export async function transfer(request: FastifyRequest, reply: FastifyReply) {
   const transferPayeeParamsSchema = z.object({
@@ -24,11 +25,14 @@ export async function transfer(request: FastifyRequest, reply: FastifyReply) {
 
   try {
     const makeTransferUseCase = makeTransferUsersUseCase()
-    await makeTransferUseCase.execute({
+    const { from, to } = await makeTransferUseCase.execute({
       payer_id: request.user.sub,
       value,
       payee,
     })
+    if (makeTransferUseCase) {
+      await sendNotification(from.cpf_cnpj, to.phone)
+    }
   } catch (err) {
     if (err instanceof ValueMustBeGreaterThanZero) {
       return reply.status(409).send({ message: err.message })

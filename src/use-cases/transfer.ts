@@ -1,8 +1,7 @@
-import { Transaction } from '@prisma/client'
+import { Transaction, User } from '@prisma/client'
 import { TransacitonsRepository } from '@/repositories/transactions-repository'
 import { Decimal } from '@prisma/client/runtime/library'
 import { UsersRepository } from '@/repositories/users-repository'
-import { sendNotification } from '@/utils/twlio'
 
 interface TransferUseCaseRequest {
   payer_id: string
@@ -12,6 +11,8 @@ interface TransferUseCaseRequest {
 
 interface TransferUseCaseResponse {
   transaction: Transaction
+  from: User
+  to: User
 }
 
 export class TransferUseCase {
@@ -30,12 +31,20 @@ export class TransferUseCase {
       value,
       payee,
     )
+    const from = await this.usersRepository.findById(payer_id)
+    if (!from) {
+      throw new Error('Payer not found')
+    }
 
-    const payer = await this.usersRepository.findById(payer_id)
-    await sendNotification(payer?.cpf_cnpj ?? '')
+    const to = await this.usersRepository.findById(payee)
+    if (!to) {
+      throw new Error('Payee not found')
+    }
 
     return {
       transaction,
+      from,
+      to,
     }
   }
 }

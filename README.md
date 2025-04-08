@@ -7,7 +7,7 @@ Picpay challange
 - [x] O sistema deve permitir o cadastro de dois tipos de usuários: comuns e lojistas.
 - [x] O cadastro deve exigir os seguintes dados obrigatórios; Nome, CPF ou CNPJ, E-mail, senha
 - [x] O sistema deve garantir que CPF/CNPJ e e-mail sejam únicos, impedindo cadastros duplicados.
-- [x]Usuários comuns podem realizar transferências de dinheiro para; Usuários comuns ou lojistas
+- [x] Usuários comuns podem realizar transferências de dinheiro para; Usuários comuns ou lojistas
 - [x] Usuários lojistas apenas recebem transferências, não podem enviar dinheiro.
 - [x] Antes de uma transferência, o sistema deve; Verificar se o usuário possui saldo suficiente, Consultar o serviço autorizador externo via GET:
 https://util.devi.tools/api/v2/authorize

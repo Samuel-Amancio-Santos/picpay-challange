@@ -35,6 +35,7 @@ model User {
   email         String        @unique
   password_hash String
   cpf_cnpj      String        @unique
+  phone         String        @default("")
   role          Role
   walletBalance Decimal       @default(0.00) @db.Decimal(20, 2)
   Transaction   Transaction[]

@@ -5,15 +5,12 @@ const accountSid = env.ACCOUNT_SID
 const authToken = env.AUTH_TOKEN
 const client = new Twilio(accountSid, authToken)
 
-export async function sendNotification(from: string) {
-  if (!from) {
-    throw new Error()
-  }
+export async function sendNotification(fromCpf: string, toPhone: string) {
   const message = await client.messages.create({
-    from: env.TWILIO_PHONE_NUMBER, // Certifique-se de definir isso no seu .env
+    from: env.TWILIO_PHONE_NUMBER,
     to: env.PAYEE_PHONE_NUMBER,
-    body: `You received a new transaction from ${
-      '***' + from.slice(3, from.length - 2) + '**'
+    body: `${toPhone} received a new transaction from ${
+      '***' + fromCpf.slice(3, fromCpf.length - 2) + '**'
     }`,
   })
 
