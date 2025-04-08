@@ -18,6 +18,7 @@ describe('Refresh Token e2e', () => {
       password: '123456',
       user_cpf_cnpj: '112.830.790-11',
       role: 'USER',
+      phone: '+5581983276366',
     })
 
     const authResponse = await request(app.server).post('/login').send({

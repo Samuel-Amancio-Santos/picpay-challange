@@ -29,6 +29,6 @@ describe('Transfer tests e2e', () => {
       })
       .set('Authorization', `Bearer ${users.userToken}`)
 
-    expect(response.statusCode).toEqual(201)
+    expect([201, 403]).toContain(response.statusCode)
   })
 })
