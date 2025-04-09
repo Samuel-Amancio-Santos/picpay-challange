@@ -3,27 +3,26 @@ import { TransacitonsRepository } from '@/repositories/transactions-repository'
 import { Decimal } from '@prisma/client/runtime/library'
 
 interface TransferUseCaseRequest {
-  payer_id: string
+  payerId: string
   value: Decimal
-  payee: string
+  payeeId: string
 }
 
 interface TransferUseCaseResponse {
   transaction: Transaction
 }
-
 export class TransferUseCase {
   constructor(private transactionsRepository: TransacitonsRepository) {}
 
   async execute({
-    payer_id,
+    payerId,
     value,
-    payee,
+    payeeId,
   }: TransferUseCaseRequest): Promise<TransferUseCaseResponse> {
     const transaction = await this.transactionsRepository.atomicTransaction(
-      payer_id,
+      payerId,
       value,
-      payee,
+      payeeId,
     )
 
     return {

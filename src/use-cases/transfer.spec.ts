@@ -18,7 +18,7 @@ describe('Transfer Use Case', () => {
     transactionsRepository = new InMemoryTransactionsRepository(usersRepository)
     sut = new TransferUseCase(transactionsRepository)
   })
-  it('should be able to transfer to the user and test the accuracy.', async () => {
+  it('should be able to transfer to the user', async () => {
     const user1 = await usersRepository.create({
       name: 'John Doe',
       email: 'johndoe1@example.com',
@@ -41,9 +41,9 @@ describe('Transfer Use Case', () => {
 
     for (let i = 0; i < 3; i++) {
       await sut.execute({
-        payer_id: user1.id,
+        payerId: user1.id,
         value: new Decimal(33.33),
-        payee: user2.id,
+        payeeId: user2.id,
       })
     }
 
@@ -63,9 +63,9 @@ describe('Transfer Use Case', () => {
 
     await expect(async () => {
       await sut.execute({
-        payer_id: user1.id,
+        payerId: user1.id,
         value: new Decimal(33.33),
-        payee: user1.id,
+        payeeId: user1.id,
       })
     }).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -93,9 +93,9 @@ describe('Transfer Use Case', () => {
 
     await expect(async () => {
       await sut.execute({
-        payer_id: user1.id,
+        payerId: user1.id,
         value: new Decimal(-33.33),
-        payee: user2.id,
+        payeeId: user2.id,
       })
     }).rejects.toBeInstanceOf(ValueMustBeGreaterThanZero)
   })
@@ -122,9 +122,9 @@ describe('Transfer Use Case', () => {
 
     await expect(async () => {
       await sut.execute({
-        payer_id: user1.id,
+        payerId: user1.id,
         value: new Decimal(240.33),
-        payee: user2.id,
+        payeeId: user2.id,
       })
     }).rejects.toBeInstanceOf(NoCreditsError)
   })
@@ -151,9 +151,9 @@ describe('Transfer Use Case', () => {
 
     await expect(async () => {
       await sut.execute({
-        payer_id: user1.id,
+        payerId: user1.id,
         value: new Decimal(40.33),
-        payee: 'Random id',
+        payeeId: 'Random id',
       })
     }).rejects.toBeInstanceOf(PayeeNotFound)
   })
@@ -181,9 +181,9 @@ describe('Transfer Use Case', () => {
 
     await expect(async () => {
       await sut.execute({
-        payer_id: user1.id,
+        payerId: user1.id,
         value: new Decimal(40.33),
-        payee: user2.id,
+        payeeId: user2.id,
       })
     }).rejects.toBeInstanceOf(UnauthorizedError)
   })
@@ -209,9 +209,9 @@ describe('Transfer Use Case', () => {
     })
 
     await sut.execute({
-      payer_id: user1.id,
+      payerId: user1.id,
       value: new Decimal(234.00033),
-      payee: user2.id,
+      payeeId: user2.id,
     })
 
     expect(user1.walletBalance).toEqual(new Decimal(642.234122))
@@ -239,9 +239,9 @@ describe('Transfer Use Case', () => {
     })
 
     const { transaction } = await sut.execute({
-      payer_id: user1.id,
+      payerId: user1.id,
       value: new Decimal(234.00033),
-      payee: user2.id,
+      payeeId: user2.id,
     })
 
     expect(transaction?.payer_sender_id).toEqual(user1.id)

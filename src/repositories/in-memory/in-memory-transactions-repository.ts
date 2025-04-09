@@ -14,13 +14,13 @@ export class InMemoryTransactionsRepository implements TransacitonsRepository {
   constructor(public inMemorUsersRepository: InMemoryUsersRepository) {}
 
   async atomicTransaction(
-    user_id: string,
+    payerId: string,
     value: Decimal,
-    payee: string,
+    payeeId: string,
   ): Promise<Transaction> {
-    const userPayer = await this.inMemorUsersRepository.findById(user_id)
+    const userPayer = await this.inMemorUsersRepository.findById(payerId)
 
-    if (!userPayer || userPayer.role !== 'USER' || userPayer.id === payee) {
+    if (!userPayer || userPayer.role !== 'USER' || userPayer.id === payeeId) {
       throw new UnauthorizedError()
     }
 
@@ -32,7 +32,7 @@ export class InMemoryTransactionsRepository implements TransacitonsRepository {
       throw new NoCreditsError()
     }
 
-    const payeeUser = await this.inMemorUsersRepository.findById(payee)
+    const payeeUser = await this.inMemorUsersRepository.findById(payeeId)
 
     if (!payeeUser) {
       throw new PayeeNotFound()

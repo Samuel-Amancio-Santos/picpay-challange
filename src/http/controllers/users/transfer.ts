@@ -12,10 +12,10 @@ import { sendNotification } from '@/utils/twlio'
 
 export async function transfer(request: FastifyRequest, reply: FastifyReply) {
   const transferPayeeParamsSchema = z.object({
-    payee: z.string(),
+    payeeId: z.string().uuid(),
   })
 
-  const { payee } = transferPayeeParamsSchema.parse(request.params)
+  const { payeeId } = transferPayeeParamsSchema.parse(request.params)
 
   const transferBodySchema = z.object({
     value: z.number().transform(Decimal),
@@ -26,9 +26,9 @@ export async function transfer(request: FastifyRequest, reply: FastifyReply) {
   try {
     const makeTransferUseCase = makeTransferUsersUseCase()
     const { transaction } = await makeTransferUseCase.execute({
-      payer_id: request.user.sub,
+      payerId: request.user.sub,
       value,
-      payee,
+      payeeId,
     })
     try {
       await sendNotification(transaction.from_cpf_cnpj, transaction.to_phone)

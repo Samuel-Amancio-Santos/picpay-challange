@@ -3,8 +3,8 @@ import { Decimal } from '@prisma/client/runtime/library'
 
 export interface TransacitonsRepository {
   atomicTransaction(
-    user_id: string,
+    payerId: string,
     value: Decimal,
-    payee: string,
+    payeeId: string,
   ): Promise<Transaction>
 }

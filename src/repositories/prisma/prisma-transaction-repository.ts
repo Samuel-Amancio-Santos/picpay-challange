@@ -9,18 +9,16 @@ import { Decimal } from '@prisma/client/runtime/library'
 
 export class PrismaTransactionsRepository implements TransacitonsRepository {
   atomicTransaction(
-    payer_id: string,
+    payerId: string,
     value: Decimal,
-    payee: string,
+    payeeId: string,
   ): Promise<Transaction> {
-    // Transação atomica caso qualquer erro ocorra, a transação é completamente desfeita.
     return prisma.$transaction(async (tx) => {
-      // lock de linha, bloqueiam erros causados por transações simultâneas
       const [userPayer] = await tx.$queryRaw<User[]>` 
-        SELECT * FROM "users" WHERE id = ${payer_id} FOR UPDATE
+        SELECT * FROM "users" WHERE id = ${payerId} FOR UPDATE
       `
 
-      if (!userPayer || userPayer.role !== 'USER' || userPayer.id === payee) {
+      if (!userPayer || userPayer.role !== 'USER' || userPayer.id === payeeId) {
         throw new UnauthorizedError()
       }
 
@@ -34,7 +32,7 @@ export class PrismaTransactionsRepository implements TransacitonsRepository {
 
       const payeeReceived = await tx.user.findUnique({
         where: {
-          id: payee,
+          id: payeeId,
         },
       })
 
