@@ -3,6 +3,7 @@ import { describe, afterAll, beforeAll, expect, it } from 'vitest'
 import request from 'supertest'
 import { createAndAuthenticateUser } from '@/utils/tests/create-and-authenticate-user'
 import { prisma } from '@/lib/prisma'
+import { Decimal } from '@prisma/client/runtime/library'
 
 describe('Transfer tests e2e', () => {
   beforeAll(async () => {
@@ -13,12 +14,12 @@ describe('Transfer tests e2e', () => {
     await app.close()
   })
 
-  it('should be able to authenticate user', async () => {
+  it('should be able to tranfer a user', async () => {
     const users = await createAndAuthenticateUser()
-    await prisma.user.update({
-      where: { id: users.payer?.id },
+    await prisma.wallet.update({
+      where: { user_id: users.payer?.id },
       data: {
-        walletBalance: users.payer?.walletBalance.plus(100),
+        amount: new Decimal(1000),
       },
     })
 

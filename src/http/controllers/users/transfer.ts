@@ -5,10 +5,10 @@ import { UnauthorizedError } from '@/use-cases/err/unauthorizedError '
 import { NoCreditsError } from '@/use-cases/err/no-credits-error'
 import { PayeeNotFound } from '@/use-cases/err/payee-not-found'
 import { UnexpectedError } from '@/use-cases/err/unexpected-error'
-
 import { z } from 'zod'
 import { Decimal } from '@prisma/client/runtime/library'
 import { sendNotification } from '@/utils/twlio'
+import { makeGetUserUseCase } from '@/use-cases/factories/make-get-user-use-case'
 
 export async function transfer(request: FastifyRequest, reply: FastifyReply) {
   const transferPayeeParamsSchema = z.object({
@@ -25,13 +25,17 @@ export async function transfer(request: FastifyRequest, reply: FastifyReply) {
 
   try {
     const makeTransferUseCase = makeTransferUsersUseCase()
-    const { transaction } = await makeTransferUseCase.execute({
+    await makeTransferUseCase.execute({
       payerId: request.user.sub,
       value,
       payeeId,
     })
     try {
-      await sendNotification(transaction.from_cpf_cnpj, transaction.to_phone)
+      const makeGetUser = makeGetUserUseCase()
+      const payer = await makeGetUser.execute({ userId: request.user.sub })
+      const payee = await makeGetUser.execute({ userId: payeeId })
+
+      await sendNotification(payer.user.cpf_cnpj, payee.user.phone)
       return reply
         .status(201)
         .send({ message: 'Transfer completed and notification sent.' })

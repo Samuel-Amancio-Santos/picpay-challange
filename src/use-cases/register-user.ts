@@ -57,7 +57,6 @@ export class RegisterUseCase {
       email,
       password_hash,
       cpf_cnpj: user_cpf_cnpj,
-      walletBalance: 0,
       role,
       phone,
     })

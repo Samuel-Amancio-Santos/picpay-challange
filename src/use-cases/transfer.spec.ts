@@ -7,37 +7,48 @@ import { UnauthorizedError } from './err/unauthorizedError '
 import { ValueMustBeGreaterThanZero } from './err/value-must-be-greater-than-zero'
 import { NoCreditsError } from './err/no-credits-error'
 import { PayeeNotFound } from './err/payee-not-found'
+import { InMemoryWalletsRepository } from '@/repositories/in-memory/in-memory-wallets-repository'
 
+let walletsRepository: InMemoryWalletsRepository
 let usersRepository: InMemoryUsersRepository
 let transactionsRepository: InMemoryTransactionsRepository
 let sut: TransferUseCase
 
 describe('Transfer Use Case', () => {
   beforeEach(async () => {
-    usersRepository = new InMemoryUsersRepository()
-    transactionsRepository = new InMemoryTransactionsRepository(usersRepository)
+    walletsRepository = new InMemoryWalletsRepository()
+    usersRepository = new InMemoryUsersRepository(walletsRepository)
+    transactionsRepository = new InMemoryTransactionsRepository(
+      usersRepository,
+      walletsRepository,
+    )
     sut = new TransferUseCase(transactionsRepository)
   })
-  it('should be able to transfer to the user', async () => {
+  it('It should be able to test the accuracy of the transaction.', async () => {
     const user1 = await usersRepository.create({
       name: 'John Doe',
       email: 'johndoe1@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf',
-      walletBalance: new Decimal(100),
       role: 'USER',
       phone: '+5581983276366',
     })
+
+    walletsRepository.items[0].amount =
+      walletsRepository.items[0].amount.plus(100)
+
+    const user1Wallet = walletsRepository.items[0]
 
     const user2 = await usersRepository.create({
       name: 'John Doe',
       email: 'johndoe2@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf2',
-      walletBalance: new Decimal(0),
       role: 'SELLER',
       phone: '+5581983276366',
     })
+
+    const user2Wallet = walletsRepository.items[1]
 
     for (let i = 0; i < 3; i++) {
       await sut.execute({
@@ -47,8 +58,8 @@ describe('Transfer Use Case', () => {
       })
     }
 
-    expect(user1.walletBalance).toEqual(new Decimal(0.01))
-    expect(user2.walletBalance).toEqual(new Decimal(99.99))
+    expect(user1Wallet.amount).toEqual(new Decimal(0.01))
+    expect(user2Wallet.amount).toEqual(new Decimal(99.99))
   })
   it('Should not be able payer transfer to yourself.', async () => {
     const user1 = await usersRepository.create({
@@ -56,7 +67,6 @@ describe('Transfer Use Case', () => {
       email: 'johndoe1@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf',
-      walletBalance: new Decimal(100),
       role: 'USER',
       phone: '+5581983276366',
     })
@@ -76,7 +86,6 @@ describe('Transfer Use Case', () => {
       email: 'johndoe1@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf',
-      walletBalance: new Decimal(100),
       role: 'USER',
       phone: '+5581983276366',
     })
@@ -86,7 +95,6 @@ describe('Transfer Use Case', () => {
       email: 'johndoe2@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf2',
-      walletBalance: new Decimal(0),
       role: 'SELLER',
       phone: '+5581983276366',
     })
@@ -105,7 +113,6 @@ describe('Transfer Use Case', () => {
       email: 'johndoe1@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf',
-      walletBalance: new Decimal(100),
       role: 'USER',
       phone: '+5581983276366',
     })
@@ -115,7 +122,6 @@ describe('Transfer Use Case', () => {
       email: 'johndoe2@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf2',
-      walletBalance: new Decimal(0),
       role: 'SELLER',
       phone: '+5581983276366',
     })
@@ -134,7 +140,6 @@ describe('Transfer Use Case', () => {
       email: 'johndoe1@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf',
-      walletBalance: new Decimal(100),
       role: 'USER',
       phone: '+5581983276366',
     })
@@ -144,7 +149,6 @@ describe('Transfer Use Case', () => {
       email: 'johndoe2@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf2',
-      walletBalance: new Decimal(0),
       role: 'SELLER',
       phone: '+5581983276366',
     })
@@ -164,7 +168,6 @@ describe('Transfer Use Case', () => {
       email: 'johndoe1@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf',
-      walletBalance: new Decimal(100),
       role: 'SELLER',
       phone: '+5581983276366',
     })
@@ -174,7 +177,6 @@ describe('Transfer Use Case', () => {
       email: 'johndoe2@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf2',
-      walletBalance: new Decimal(0),
       role: 'SELLER',
       phone: '+5581983276366',
     })
@@ -193,20 +195,30 @@ describe('Transfer Use Case', () => {
       email: 'johndoe1@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf',
-      walletBalance: new Decimal(876.234452),
+
       role: 'USER',
       phone: '+5581983276366',
     })
+
+    walletsRepository.items[0].amount =
+      walletsRepository.items[0].amount.plus(876.234452)
+
+    const user1Wallet = walletsRepository.items[0]
 
     const user2 = await usersRepository.create({
       name: 'John Doe',
       email: 'johndoe2@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf2',
-      walletBalance: new Decimal(123.23422),
+
       role: 'SELLER',
       phone: '+5581983276366',
     })
+
+    walletsRepository.items[1].amount =
+      walletsRepository.items[1].amount.plus(123.23422)
+
+    const user2Wallet = walletsRepository.items[1]
 
     await sut.execute({
       payerId: user1.id,
@@ -214,8 +226,8 @@ describe('Transfer Use Case', () => {
       payeeId: user2.id,
     })
 
-    expect(user1.walletBalance).toEqual(new Decimal(642.234122))
-    expect(user2.walletBalance).toEqual(new Decimal(357.23455))
+    expect(user1Wallet.amount).toEqual(new Decimal(642.234122))
+    expect(user2Wallet.amount).toEqual(new Decimal(357.23455))
   })
   it('Should be able to create transaction.', async () => {
     const user1 = await usersRepository.create({
@@ -223,26 +235,32 @@ describe('Transfer Use Case', () => {
       email: 'johndoe1@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf',
-      walletBalance: new Decimal(876.234452),
       role: 'USER',
       phone: '+5581983276366',
     })
+
+    walletsRepository.items[0].amount =
+      walletsRepository.items[0].amount.plus(876.234452)
 
     const user2 = await usersRepository.create({
       name: 'John Doe',
       email: 'johndoe2@example.com',
       password_hash: '123123',
       cpf_cnpj: 'user cpf2',
-      walletBalance: new Decimal(123.23422),
       role: 'SELLER',
       phone: '+5581983276366',
     })
+
+    walletsRepository.items[1].amount =
+      walletsRepository.items[1].amount.plus(123.23422)
 
     const { transaction } = await sut.execute({
       payerId: user1.id,
       value: new Decimal(234.00033),
       payeeId: user2.id,
     })
+
+    console.log(transaction)
 
     expect(transaction?.payer_sender_id).toEqual(user1.id)
     expect(transaction?.payee_received_id).toEqual(user2.id)

@@ -4,10 +4,14 @@ import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-user
 import { UserAlreadyExistsError } from './err/user-already-exists-error'
 import { CpfOrCnpjAlreadyExistsError } from './err/cpf-or-cnpj-error'
 import { InvalidCredentialsError } from './err/invalid-credentials-error'
+import { InMemoryWalletsRepository } from '@/repositories/in-memory/in-memory-wallets-repository'
 
 describe('Register Use Case', () => {
   it('should be able to create a new user', async () => {
-    const inMemoryUsersRepository = new InMemoryUsersRepository()
+    const walletsRepository = new InMemoryWalletsRepository()
+    const inMemoryUsersRepository = new InMemoryUsersRepository(
+      walletsRepository,
+    )
     const registerUseCase = new RegisterUseCase(inMemoryUsersRepository)
 
     const { user } = await registerUseCase.execute({
@@ -22,7 +26,10 @@ describe('Register Use Case', () => {
   })
 
   it('should be able to test register erros', async () => {
-    const inMemoryUsersRepository = new InMemoryUsersRepository()
+    const walletsRepository = new InMemoryWalletsRepository()
+    const inMemoryUsersRepository = new InMemoryUsersRepository(
+      walletsRepository,
+    )
     const registerUseCase = new RegisterUseCase(inMemoryUsersRepository)
 
     const email = 'johndoe@example.com'

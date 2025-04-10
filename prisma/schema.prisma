@@ -23,9 +23,6 @@ model Transaction {
   value             Decimal  @db.Decimal(20, 2)
   payer_sender_id   String
   payee_received_id String
-  from_cpf_cnpj     String
-  to_cpf_cnpj       String
-  to_phone          String
   user              User     @relation(fields: [payer_sender_id], references: [id])
   created_at        DateTime @default(now())
 
@@ -40,9 +37,19 @@ model User {
   cpf_cnpj      String        @unique
   phone         String
   role          Role
-  walletBalance Decimal       @default(0.00) @db.Decimal(20, 2)
   Transaction   Transaction[]
   created_at    DateTime      @default(now())
+  wallet        Wallet?
 
   @@map("users")
+}
+
+model Wallet {
+  id         String   @id @default(uuid())
+  amount     Decimal  @db.Decimal(20, 2)
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String   @unique
+  created_at DateTime @default(now())
+
+  @@map("wallets")
 }

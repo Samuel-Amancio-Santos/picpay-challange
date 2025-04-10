@@ -7,49 +7,61 @@ import { UnauthorizedError } from '@/use-cases/err/unauthorizedError '
 import { ValueMustBeGreaterThanZero } from '@/use-cases/err/value-must-be-greater-than-zero'
 import { NoCreditsError } from '@/use-cases/err/no-credits-error'
 import { PayeeNotFound } from '@/use-cases/err/payee-not-found'
+import { InMemoryWalletsRepository } from './in-memory-wallets-repository'
 
 export class InMemoryTransactionsRepository implements TransacitonsRepository {
   public items: Transaction[] = []
 
-  constructor(public inMemorUsersRepository: InMemoryUsersRepository) {}
+  constructor(
+    private inMemoryUsersRepository: InMemoryUsersRepository,
+    private inMemoryWalletsRepository: InMemoryWalletsRepository,
+  ) {}
 
   async atomicTransaction(
     payerId: string,
     value: Decimal,
     payeeId: string,
   ): Promise<Transaction> {
-    const userPayer = await this.inMemorUsersRepository.findById(payerId)
-
-    if (!userPayer || userPayer.role !== 'USER' || userPayer.id === payeeId) {
-      throw new UnauthorizedError()
-    }
-
     if (value.lte(0)) {
       throw new ValueMustBeGreaterThanZero()
     }
 
-    if (userPayer.walletBalance.sub(value).lt(0)) {
-      throw new NoCreditsError()
+    const payer = await this.inMemoryUsersRepository.findById(payerId)
+    const payee = await this.inMemoryUsersRepository.findById(payeeId)
+
+    if (!payer || payer.role === 'SELLER' || payer.id === payeeId) {
+      throw new UnauthorizedError()
     }
 
-    const payeeUser = await this.inMemorUsersRepository.findById(payeeId)
-
-    if (!payeeUser) {
+    if (!payee) {
       throw new PayeeNotFound()
     }
 
-    userPayer.walletBalance = userPayer.walletBalance.minus(value)
-    payeeUser.walletBalance = payeeUser.walletBalance.plus(value)
+    const payerWallet =
+      await this.inMemoryWalletsRepository.findByUserId(payerId)
+    const payeeWallet =
+      await this.inMemoryWalletsRepository.findByUserId(payeeId)
+
+    if (!payerWallet || !payeeWallet) {
+      throw new Error('Wallet not found')
+    }
+
+    if (payerWallet.amount.lessThan(value)) {
+      throw new NoCreditsError()
+    }
+
+    payerWallet.amount = payerWallet.amount.minus(value)
+    payeeWallet.amount = payeeWallet.amount.plus(value)
 
     const transaction = {
       id: randomUUID(),
-      payer_sender_id: userPayer.id,
       value,
-      payee_received_id: payeeUser.id,
+      payer_sender_id: payer.id,
+      payee_received_id: payee.id,
+      from_cpf_cnpj: payer.cpf_cnpj,
+      to_cpf_cnpj: payee.cpf_cnpj,
+      to_phone: payee.phone,
       created_at: new Date(),
-      from_cpf_cnpj: userPayer.cpf_cnpj,
-      to_cpf_cnpj: payeeUser.cpf_cnpj,
-      to_phone: payeeUser.phone,
     }
 
     this.items.push(transaction)

@@ -24,10 +24,18 @@ CREATE TABLE "users" (
     "cpf_cnpj" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "role" "Role" NOT NULL,
-    "walletBalance" DECIMAL(20,2) NOT NULL DEFAULT 0.00,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "wallets" (
+    "id" TEXT NOT NULL,
+    "amount" DECIMAL(20,2) NOT NULL,
+    "user_id" TEXT NOT NULL,
+
+    CONSTRAINT "wallets_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -36,5 +44,11 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 -- CreateIndex
 CREATE UNIQUE INDEX "users_cpf_cnpj_key" ON "users"("cpf_cnpj");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "wallets_user_id_key" ON "wallets"("user_id");
+
 -- AddForeignKey
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_payer_sender_id_fkey" FOREIGN KEY ("payer_sender_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "wallets" ADD CONSTRAINT "wallets_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

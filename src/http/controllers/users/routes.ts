@@ -14,7 +14,7 @@ export async function usersRoutes(app: FastifyInstance) {
 
   /** Authenticated */
   app.post(
-    '/users/transfer/:payee',
+    '/users/transfer/:payeeId',
     {
       onRequest: [
         verifyJwt,
